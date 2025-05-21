@@ -11,7 +11,8 @@ namespace E_Commerce.Application.Usecases.CategoryServices
 {
     public class CategoryServices : ICategoryServices
     {
-        private readonly IRepository<Category> _repository;
+        private readonly IRepository<Category> 
+            _repository;
 
         public CategoryServices(IRepository<Category> repository)
         {
