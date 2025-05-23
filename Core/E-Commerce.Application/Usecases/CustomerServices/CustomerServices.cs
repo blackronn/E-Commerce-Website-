@@ -44,7 +44,7 @@ namespace E_Commerce.Application.Usecases.CustomerServices
                 FirstName = x.FirstName,
                 LastName = x.LastName,
                 Email = x.Email,
-                Orders = x.Orders,  
+                //Orders = x.Orders,  
             }).ToList();
         }
 
@@ -57,7 +57,7 @@ namespace E_Commerce.Application.Usecases.CustomerServices
                 FirstName = values.FirstName,
                 LastName = values.LastName,
                 Email = values.Email,
-                Orders = values.Orders,
+                //Orders = values.Orders,
             };
         }
 
@@ -67,7 +67,7 @@ namespace E_Commerce.Application.Usecases.CustomerServices
             values.FirstName = updateCustomerDto.FirstName;
             values.LastName = updateCustomerDto.LastName;
             values.Email = updateCustomerDto.Email;
-            //values.Orders = updateCustomerDto.Orders;   
+            //values.Orders = updateCustomerDto.Orders;
             await _repository.UpdateAsync(values);
 
         }

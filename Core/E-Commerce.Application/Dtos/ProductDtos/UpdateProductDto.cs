@@ -1,12 +1,13 @@
-﻿using System;
+﻿using E_Commerce.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace E_Commerce.Domain.Entities
+namespace E_Commerce.Application.Dtos.ProductDtos
 {
-    public class Product
+    public class UpdateProductDto
     {
         public int ProductID { get; set; }
         public string ProductName { get; set; }
