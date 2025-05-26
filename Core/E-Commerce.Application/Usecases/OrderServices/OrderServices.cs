@@ -1,4 +1,5 @@
 ﻿using E_Commerce.Application.Dtos.OrderDtos;
+using E_Commerce.Application.Dtos.OrderItemDtos;
 using E_Commerce.Application.Interfaces;
 using E_Commerce.Domain.Entities;
 using System;
@@ -12,24 +13,38 @@ namespace E_Commerce.Application.Usecases.OrderServices
     public class OrderServices: IOrderServices
     {
         private readonly IRepository<Order> _repository;
-        public OrderServices(IRepository<Order> repository)
+        private readonly IRepository<OrderItem> _repositoryOrderItem;
+
+        public OrderServices(IRepository<OrderItem> repositoryOrderItem, IRepository<Order> repository)
         {
+            _repositoryOrderItem = repositoryOrderItem;
             _repository = repository;
         }
 
         public async Task CreateOrderAsync(CreateOrderDto model)
         {
-            await _repository.CreateAsync(new Order
+            var order = new Order
             {
                 OrderDate = model.OrderDate,
                 TotalAmount = model.TotalAmount,
                 OrderStatus = model.OrderStatus,
-                BillingAdress = model.BillingAdress,
+                //BillingAdress = model.BillingAdress,
                 ShippingAdress = model.ShippingAdress,
                 PaymentMethod = model.PaymentMethod,
                 CustomerID = model.CustomerID,
-                OrderItems = model.OrderItems
-            });
+            };
+            await _repository.CreateAsync(order);
+            foreach (var item in model.OrderItems)
+            {
+                await _repositoryOrderItem.CreateAsync( new OrderItem
+                {
+                    OrderID = order.OrderID,
+                    ProductID = item.ProductID,
+                    Quantity = item.Quantity,
+                    TotalPrice = item.TotalPrice,
+                });
+
+            }
         }
 
         public async Task DeleteOrderAsync(int id)
@@ -40,16 +55,26 @@ namespace E_Commerce.Application.Usecases.OrderServices
 
         public async Task<List<ResultOrderDto>> GetAllOrderAsync()
         {
-            var order = await _repository.GetAllAsync();
-            return order.Select(x => new ResultOrderDto
+            var values = await _repository.GetAllAsync();
+            var orderitem = await _repositoryOrderItem.GetAllAsync();
+            return values.Select(x => new ResultOrderDto
             {
                 OrderID = x.OrderID,
                 OrderDate = x.OrderDate,
                 TotalAmount = x.TotalAmount,
                 OrderStatus = x.OrderStatus,
-                BillingAdress = x.BillingAdress,
+                //BillingAdress = x.BillingAdress,
                 ShippingAdress = x.ShippingAdress,
                 PaymentMethod = x.PaymentMethod,
+                CustomerID = x.CustomerID,
+                OrderItems = x.OrderItems.Select(z => new ResultOrderItemDto
+                {
+                    OrderID = z.OrderID,
+                    ProductID = z.ProductID,
+                    Quantity = z.Quantity,
+                    TotalPrice = z.TotalPrice,
+                    OrderItemID = z.OrderItemID,
+                }).ToList(),
             }).ToList();
         }
 
@@ -62,9 +87,10 @@ namespace E_Commerce.Application.Usecases.OrderServices
                 OrderDate = values.OrderDate,
                 TotalAmount = values.TotalAmount,
                 OrderStatus = values.OrderStatus,
-                BillingAdress = values.BillingAdress,
+                //BillingAdress = values.BillingAdress,
                 ShippingAdress = values.ShippingAdress,
                 PaymentMethod = values.PaymentMethod,
+                CustomerID = values.CustomerID,
             };
         }
 
@@ -75,10 +101,11 @@ namespace E_Commerce.Application.Usecases.OrderServices
             values.OrderDate = model.OrderDate;
             values.TotalAmount = model.TotalAmount;
             values.OrderStatus = model.OrderStatus;
-            values.BillingAdress = model.BillingAdress;
+            //values.BillingAdress = model.BillingAdress;
             values.ShippingAdress = model.ShippingAdress;
             values.PaymentMethod = model.PaymentMethod;
-                await _repository.UpdateAsync(values);
+            values.CustomerID = model.CustomerID;
+            await _repository.UpdateAsync(values);
         }
     }
 }

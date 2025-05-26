@@ -9,12 +9,14 @@ namespace E_Commerce.WebApi.Controllers
     [ApiController]
     public class CategoriesController : ControllerBase
     {
-        private readonly CategoryServices _categoryServices;
+        private readonly ICategoryServices _categoryServices;
 
-        public CategoriesController(CategoryServices categoryServices)
+        public CategoriesController(ICategoryServices categoryServices)
         {
             _categoryServices = categoryServices;
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> GetAllCategory()

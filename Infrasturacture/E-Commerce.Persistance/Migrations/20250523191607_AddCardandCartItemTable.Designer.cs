@@ -4,6 +4,7 @@ using E_Commerce.Persistance.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250523191607_AddCardandCartItemTable")]
+    partial class AddCardandCartItemTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,57 +24,6 @@ namespace E_Commerce.Persistance.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Cart", b =>
-                {
-                    b.Property<int>("CartID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartID"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CustomerID")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("CartID");
-
-                    b.HasIndex("CustomerID");
-
-                    b.ToTable("Carts");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.CartItem", b =>
-                {
-                    b.Property<int>("CartItemID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemID"));
-
-                    b.Property<int>("CartID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("CartItemID");
-
-                    b.HasIndex("CartID");
-
-                    b.ToTable("CartItems");
-                });
 
             modelBuilder.Entity("E_Commerce.Domain.Entities.Category", b =>
                 {
@@ -122,6 +74,10 @@ namespace E_Commerce.Persistance.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderID"));
+
+                    b.Property<string>("BillingAdress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CustomerID")
                         .HasColumnType("int");
@@ -210,24 +166,6 @@ namespace E_Commerce.Persistance.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Cart", b =>
-                {
-                    b.HasOne("E_Commerce.Domain.Entities.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerID");
-
-                    b.Navigation("Customer");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.CartItem", b =>
-                {
-                    b.HasOne("E_Commerce.Domain.Entities.Cart", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("CartID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("E_Commerce.Domain.Entities.OrderItem", b =>
                 {
                     b.HasOne("E_Commerce.Domain.Entities.Order", null)
@@ -235,11 +173,6 @@ namespace E_Commerce.Persistance.Migrations
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Cart", b =>
-                {
-                    b.Navigation("CartItems");
                 });
 
             modelBuilder.Entity("E_Commerce.Domain.Entities.Order", b =>

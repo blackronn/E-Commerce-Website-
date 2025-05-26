@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce.Persistance.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250521144500_addothermodeltable")]
-    partial class addothermodeltable
+    [Migration("20250523140919_CreateDatabase")]
+    partial class CreateDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,8 +102,6 @@ namespace E_Commerce.Persistance.Migrations
 
                     b.HasKey("OrderID");
 
-                    b.HasIndex("CustomerID");
-
                     b.ToTable("Orders");
                 });
 
@@ -167,25 +165,12 @@ namespace E_Commerce.Persistance.Migrations
 
                     b.HasKey("ProductID");
 
-                    b.HasIndex("CategoryID");
-
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Order", b =>
-                {
-                    b.HasOne("E_Commerce.Domain.Entities.Customer", "Customer")
-                        .WithMany("Orders")
-                        .HasForeignKey("CustomerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("E_Commerce.Domain.Entities.OrderItem", b =>
                 {
-                    b.HasOne("E_Commerce.Domain.Entities.Order", "Order")
+                    b.HasOne("E_Commerce.Domain.Entities.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -197,30 +182,7 @@ namespace E_Commerce.Persistance.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
-
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Product", b =>
-                {
-                    b.HasOne("E_Commerce.Domain.Entities.Category", "Category")
-                        .WithMany("Products")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Category", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("E_Commerce.Domain.Entities.Customer", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("E_Commerce.Domain.Entities.Order", b =>

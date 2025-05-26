@@ -15,6 +15,6 @@ namespace E_Commerce.Application.Dtos.ProductDtos
         public int Stock { get; set; }
         public string ImageUrl { get; set; }
         public int CategoryID { get; set; }
-        public Category Category { get; set; }
+        //public Category Category { get; set; }
     }
 }
