@@ -1,4 +1,5 @@
-﻿using E_Commerce.Domain.Entities;
+﻿using E_Commerce.Application.Dtos.CartItemDtos;
+using E_Commerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace E_Commerce.Application.Dtos.CartDtos
         public decimal TotalAmount { get; set; }
 
         public DateTime CreatedDate { get; set; }
-        public int? CustomerID { get; set; }
-        public ICollection<CartItem> CartItems { get; set; }
+        public int CustomerID { get; set; }
+        public Customer Customer { get; set; }
+        public ICollection<ResultCartItemDto> CartItems { get; set; }
     }
 }

@@ -15,6 +15,7 @@ namespace E_Commerce.Application.Dtos.CartDtos
 
         public DateTime CreatedDate { get; set; }
         public int? CustomerID { get; set; }
+        public Customer? Customer { get; set; }
         public ICollection<ResultCartItemDto> CartItems { get; set; }
     }
 }

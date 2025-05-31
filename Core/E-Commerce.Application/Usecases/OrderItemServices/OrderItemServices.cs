@@ -67,7 +67,7 @@ namespace E_Commerce.Application.Usecases.OrderItemServices
         {
             var values = await _repository.GetByIdAsync(model.OrderItemID);
             values.OrderItemID = model.OrderItemID;
-            values.OrderID = model.OrderID;
+            //values.OrderID = model.OrderID;
             values.ProductID = model.ProductID;
             values.Quantity = model.Quantity;
             values.TotalPrice = model.TotalPrice;

@@ -1,6 +1,7 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace E_Commerce.Application.Interfaces
 
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task<T> GetByFilterAsync(Expression<Func<T, bool>> filter);
 
 
     }

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
 
 namespace E_Commerce.Application.Usecases.CartServices
 {
@@ -15,11 +16,15 @@ namespace E_Commerce.Application.Usecases.CartServices
     {
         private readonly IRepository<Cart> _repository;
         private readonly IRepository<CartItem> _cartItemRepository;
+        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Product> _productRepository;
 
-        public CartServices(IRepository<CartItem> cartItemRepository,IRepository<Cart> repository)
+        public CartServices(IRepository<CartItem> cartItemRepository,IRepository<Cart> repository,IRepository<Customer> customerRepository,IRepository<Product> productRepository)
         {
             _cartItemRepository = cartItemRepository;
             _repository = repository;
+            _customerRepository = customerRepository;
+            _productRepository = productRepository;
         }
 
         public async Task CreateCartAsync(CreateCartDto createCartDto)
@@ -51,52 +56,119 @@ namespace E_Commerce.Application.Usecases.CartServices
         public async Task DeleteCartAsync(int id)
         {
             var cart = await _repository.GetByIdAsync(id);
+            var cartItems = await _cartItemRepository.GetAllAsync();
+            foreach (var item in cartItems.Where(x => x.CartID == id))
+            {
+                await _cartItemRepository.DeleteAsync(item);
+            }
             await _repository.DeleteAsync(cart);
         }
 
         public async Task<List<ResultCartDto>> GetAllCartAsync()
         {
-            var values = await _repository.GetAllAsync();
-            var cartitems = await _cartItemRepository.GetAllAsync();
-            return values.Select(x => new ResultCartDto
+            var carts = await _repository.GetAllAsync();
+            var cartItems = await _cartItemRepository.GetAllAsync();
+            var product = await _productRepository.GetAllAsync();
+            var result = new List<ResultCartDto>();
+            foreach (var item in carts)
             {
-                CartID = x.CartID,
-                TotalAmount = x.TotalAmount,
-                CreatedDate = x.CreatedDate,
-                CustomerID = x.CustomerID,
-                CartItems = x.CartItems.Select(y => new ResultCartItemDto
+                var customerdto = await _customerRepository.GetByFilterAsync(cus => cus.CustomerID == item.CustomerID);
+                var cartDto = new ResultCartDto
                 {
-                    CartItemID = y.CartItemID,
-                    CartID = y.CartID,
-                    ProductID = y.ProductID,
-                    Quantity = y.Quantity,
-                    TotalPrice = y.TotalPrice
-                }).Where(y => y.CartID == x.CartID).ToList()
-            }).ToList();
+                    CartID = item.CartID,
+                    TotalAmount = item.TotalAmount,
+                    CreatedDate = item.CreatedDate,
+                    Customer = customerdto,
+                    CustomerID = item.CustomerID,
+                    CartItems = new List<ResultCartItemDto>()
+                };
+                foreach (var item1 in item.CartItems)
+                {
+                    var prodcutdto = await _productRepository.GetByFilterAsync(prd => prd.ProductID == item1.ProductID);
+                    var cartItemddto = new ResultCartItemDto
+                    {
+                        CartID = item1.CartID,
+                        CartItemID = item1.CartItemID,
+                        ProductID = item1.ProductID,
+                        Product = prodcutdto,
+                        Quantity = item1.Quantity,
+                        TotalPrice = item1.TotalPrice,
+                    };
+                    cartDto.CartItems.Add(cartItemddto);
+                    
+
+                }
+                result.Add(cartDto);
+                
+            }
+            return result;
         }
 
         public async Task<GetByIdCartDto> GetCartByIdAsync(int id)
         {
             var cart = await _repository.GetByIdAsync(id);
-            
-            return new GetByIdCartDto
+            var customer = await _customerRepository.GetByIdAsync(id);
+            var cartItem = await _cartItemRepository.GetAllAsync();
+            var customerdto = await _customerRepository.GetByFilterAsync(cus => cus.CustomerID == cart.CustomerID);
+            var result = new GetByIdCartDto
             {
                 CartID = cart.CartID,
                 TotalAmount = cart.TotalAmount,
                 CreatedDate = cart.CreatedDate,
+                CartItems = new List<ResultCartItemDto>(),
                 CustomerID = cart.CustomerID,
-                
+                Customer = customerdto,
+
             };
+            foreach (var item1 in cart.CartItems)
+            {
+                var product = await _productRepository.GetByIdAsync(item1.ProductID);
+                var cartItemDto = new ResultCartItemDto
+                {
+                    CartItemID = item1.CartItemID,
+                    CartID = item1.CartID,
+                    ProductID = item1.ProductID,
+                    Product = product,
+                    Quantity = item1.Quantity,
+                    TotalPrice = item1.TotalPrice
+                };
+                result.CartItems.Add(cartItemDto);
+            }
+
+            return result;
         }
 
         public async Task UpdateCartAsync(UpdateCartDto updateCartDto)
         {
             var cart = await _repository.GetByIdAsync(updateCartDto.CartID);
-            cart.CreatedDate = updateCartDto.CreatedDate;
-            cart.TotalAmount = updateCartDto.TotalAmount;
-            cart.CustomerID = updateCartDto.CustomerID;
-            await _repository.UpdateAsync(cart);
+            var cartitem = await _cartItemRepository.GetAllAsync();
+            //cart.CreatedDate = updateCartDto.CreatedDate;
+            //cart.TotalAmount = updateCartDto.TotalAmount;
+            //cart.CustomerID = updateCartDto.CustomerID;
+            var sum = 0m;
+            foreach (var item1 in updateCartDto.CartItems)
+            { 
+                foreach (var item in cart.CartItems)
+                {
+                var cartItem = await _cartItemRepository.GetByIdAsync(item.CartItemID);
+               
+                
+                    if (cartItem.CartItemID == item1.CartItemID)
+                    {
+                        cartItem.Quantity = item1.Quantity;
+                        cartItem.TotalPrice = item1.TotalPrice;
+                    }
+                    sum = sum + item.TotalPrice;
 
+
+                        
+                }
+               
+
+
+            }
+            cart.TotalAmount = sum;
+            await _repository.UpdateAsync(cart);
         }
 
     }

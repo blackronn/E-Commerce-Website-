@@ -14,5 +14,6 @@ namespace E_Commerce.Application.Usecases.CartItemServices
         Task CreateCartItemAsync(CreateCartItemDto createCartItemDto);
         Task UpdateCartItemAsync(UpdateCartItemDto updateCartItemDto);
         Task DeleteCartItemAsync(int id);
+        Task<List<ResultCartItemDto>> GetByCartIdCartItemsAsync(int cartId);
     }
 }

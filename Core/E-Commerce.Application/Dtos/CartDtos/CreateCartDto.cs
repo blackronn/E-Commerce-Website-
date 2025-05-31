@@ -14,7 +14,7 @@ namespace E_Commerce.Application.Dtos.CartDtos
        // public decimal TotalAmount { get; set; }
 
         public DateTime CreatedDate { get; set; }
-        public int? CustomerID { get; set; }
+        public int CustomerID { get; set; }
         public ICollection<CreateCartItemDto>? CartItems { get; set; }
     }
 }

@@ -51,6 +51,11 @@ namespace E_Commerce.Application.Usecases.CartItemServices
 
         }
 
+        public Task<List<ResultCartItemDto>> GetByCartIdCartItemsAsync(int cartId)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<GetByIdCartItemDto> GetCartItemByIdAsync(int id)
         {
             var cartItem = await _repository.GetByIdAsync(id);
@@ -70,7 +75,7 @@ namespace E_Commerce.Application.Usecases.CartItemServices
            
                 cartItem.Quantity = updateCartItemDto.Quantity;
                 cartItem.ProductID = updateCartItemDto.ProductID;
-                cartItem.CartID = updateCartItemDto.CartID;
+                //cartItem.CartID = updateCartItemDto.CartID;
                 cartItem.TotalPrice = updateCartItemDto.TotalPrice;
                 await _repository.UpdateAsync(cartItem);
         }
