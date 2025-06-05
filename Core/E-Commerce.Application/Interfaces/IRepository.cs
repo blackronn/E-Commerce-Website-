@@ -16,6 +16,7 @@ namespace E_Commerce.Application.Interfaces
         Task UpdateAsync(T entity);
         Task DeleteAsync(T entity);
         Task<T> GetByFilterAsync(Expression<Func<T, bool>> filter);
+        Task<List<T>> GetProductsTakeAsync(int take);  
 
 
     }

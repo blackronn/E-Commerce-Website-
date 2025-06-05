@@ -69,6 +69,21 @@ namespace E_Commerce.Application.Usecases.ProductServices
             };
         }
 
+        public async Task<List<ResultProductDto>> GetProductsTakeAsync(int take)
+        {
+            var products = await _productRepository.GetProductsTakeAsync(take);
+            return products.Select(x => new ResultProductDto
+            {
+                ProductID = x.ProductID,
+                ProductName = x.ProductName,
+                Description = x.Description,
+                Price = x.Price,
+                Stock = x.Stock,
+                CategoryID = x.CategoryID,
+                ImageUrl = x.ImageUrl,
+            }).ToList();
+        }
+
         public async Task UpdateProductAsync(UpdateProductDto model)
         {
             var product = await _productRepository.GetByIdAsync(model.ProductID);

@@ -14,5 +14,6 @@ namespace E_Commerce.Application.Usecases.ProductServices
         Task CreateProductAsync(CreateProductDto model);
         Task UpdateProductAsync(UpdateProductDto model);
         Task DeleteProductAsync(int id);
+        Task<List<ResultProductDto>> GetProductsTakeAsync(int take);
     }
 }
